@@ -10,11 +10,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,9 +23,7 @@ import java.util.Set;
 @EqualsAndHashCode
 public class User  implements UserDetails {
 
-    @Column (name = "id")
-    @Id
-    private Long id;
+
 
     @Column(name = "name")
     private String name;
@@ -34,6 +31,7 @@ public class User  implements UserDetails {
     @Column(name= "last_name")
     private String lastName;
 
+    @Id
     @Column(name = "email")
     private String email;
 
@@ -53,6 +51,9 @@ public class User  implements UserDetails {
         System.out.println(authorities);
         return authorities;
     }
+
+    @OneToMany(mappedBy = "user")
+    private List<UserQueries> userQueriesList;
 
     @Override
     @JsonIgnore

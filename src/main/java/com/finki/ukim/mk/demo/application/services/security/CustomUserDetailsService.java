@@ -2,6 +2,7 @@ package com.finki.ukim.mk.demo.application.services.security;
 
 
 import com.finki.ukim.mk.demo.domain.exceptions.NoAuthenticationFoundException;
+import com.finki.ukim.mk.demo.domain.exceptions.UsernameAlreadyRegisteredException;
 import com.finki.ukim.mk.demo.domain.model.User;
 import com.finki.ukim.mk.demo.domain.model.dto.UserDTO;
 import com.finki.ukim.mk.demo.domain.repository.UserRepository;
@@ -61,7 +62,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Transactional
-    public User register(UserDTO userDTO) {
+    public User register(UserDTO userDTO) throws UsernameAlreadyRegisteredException {
+
+        if (userRepository.findByEmail(userDTO.email).isPresent()){
+            throw new UsernameAlreadyRegisteredException();
+        }
+
         User newUser = new User();
 
         newUser.setEmail(userDTO.email);

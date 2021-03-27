@@ -51,7 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/webjars/**",
                 "/error/**",
                 "/api/event-log/**",
-                "/sparql/**"
+                "/sparql/**",
+                "/api/users/register"
         );
     }
 
