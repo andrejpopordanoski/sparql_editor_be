@@ -7,7 +7,10 @@ import com.finki.ukim.mk.demo.application.services.UserService;
 import com.finki.ukim.mk.demo.application.services.security.CustomUserDetailsService;
 import com.finki.ukim.mk.demo.domain.exceptions.UsernameAlreadyRegisteredException;
 import com.finki.ukim.mk.demo.domain.model.User;
+import com.finki.ukim.mk.demo.domain.model.UserQueries;
 import com.finki.ukim.mk.demo.domain.model.dto.UserDTO;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,7 +56,7 @@ public class UserCatalog {
 
     @PostMapping("/save_query")
     public void saveQuery(@RequestParam String url, @RequestParam String defaultGraphSetIri, @RequestParam String queryStr, @RequestParam String format, @RequestParam(required = false, defaultValue = "10000") int timeout, @RequestParam String queryName)  {
-        String queryResult = queryService.getByQuery(url, defaultGraphSetIri, queryStr, format, timeout);
+        String queryResult = queryService.getByQuery(url, defaultGraphSetIri, queryStr, format, timeout, false);
         User user = customUserDetailsService.getAuthenticatedUser();
         if(user != null){
             userQueriesService.createNewUserQuery(user.getEmail(), url, defaultGraphSetIri, queryStr, format, timeout, queryResult, queryName);
@@ -61,7 +64,20 @@ public class UserCatalog {
 
     }
 
+    @GetMapping("/get_all_queries")
+    public List<UserQueries> getAllQueriesForUser()  {
+        User user = customUserDetailsService.getAuthenticatedUser();
+        return userQueriesService.getAllQueriesForUser(user.getEmail());
+    }
 
+    @PostMapping("/qet_query_result")
+    public ResponseEntity<String> getQueryResult(@RequestParam String format, @RequestParam Long queryId)
+    {
+        String [] formatSplit = format.split("/");
+
+        return ResponseEntity.ok().contentType(new MediaType(formatSplit[0], formatSplit[1])).body(userQueriesService.getQueryResult(queryId));
+    }
+//
 
 
 

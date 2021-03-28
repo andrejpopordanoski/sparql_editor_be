@@ -1,5 +1,6 @@
 package com.finki.ukim.mk.demo.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -42,6 +43,7 @@ public class UserQueries {
     private int timeout;
 
     @Column(name = "query_result", columnDefinition="MEDIUMTEXT default 'Result was too big for storing in the database'")
+    @JsonIgnore
     private String queryResult;
 
     @ManyToOne

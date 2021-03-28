@@ -32,4 +32,8 @@ public class UserQueriesService {
     public List<UserQueries> getAllQueriesForUser(String email){
         return userQueriesRepository.findAllByUserEmail(email);
     }
+
+    public String getQueryResult(Long id){
+        return userQueriesRepository.findById(id).get().getQueryResult();
+    }
 }

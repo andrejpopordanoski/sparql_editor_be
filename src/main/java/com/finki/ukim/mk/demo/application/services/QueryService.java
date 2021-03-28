@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 public class QueryService {
-    public String getByQuery(String url, String defaultGraphSetIri,  String queryStr,  String format, int timeout){
+    public String getByQuery(String url, String defaultGraphSetIri,  String queryStr,  String format, int timeout, boolean forHtml){
         try {
             Query query = QueryFactory.create(queryStr);
             ArrayList<String> defaultGraphIri =  new ArrayList<String>();
@@ -37,28 +37,38 @@ public class QueryService {
                 else if (format.equals("text/html")) {
                     List<String> l=rs.getResultVars();
                     String s = "";
-                    s += "<html><body bgcolor=\"#EAE6F5\">";
-                    s += "<h2 align=center><font color=\"#FF00FF\">SPARQL RESULT</font></h2>";
-                    s += "<table border=1 align=\"center\">";
-                    s += "<tr>";
+                    if (!forHtml) {
+                        s += "<html><body>" + "\n";
+                    }
+                    s += "<div>" + "\n";
+//                    s += "<h2 align=center><font color=\"#FF00FF\">SPARQL RESULT</font></h2>";
+                    s += "<table>" + "\n";
+
+
+                    s += "<tbody>" + "\n";
+
+                    s += "<tr>" + "\n";
                     for(int i=0;i<l.size();i++)
-                        s += "<th bgcolor=\"#FFA500\"><fontsize=6>"+l.get(i)+"</font></th>";
-                    s += "</tr>";
-                    s += "<tbody bgcolor=\"#C0C0C0\">";
+                        s += "<th><p>"+l.get(i)+"</p></th>" + "\n";
+                    s += "</tr>" + "\n";
 
                     while(rs.hasNext())
                     {
                         QuerySolution qs=rs.nextSolution();
-                        s += "<tr>";
+                        s += "<tr>" + "\n";
                         for(int i=0;i<l.size();i++)
                         {
                             String val=qs.get(l.get(i)).toString();
-                            s += "<td>"+val+"</td>";
+                            s += "<td><div>"+val+"</div></td>" + "\n";
                         }
-                        s += "</tr>";
+                        s += "</tr>" + "\n";
                     }
-                    s += "</tbody></table>";
-                    s += "</body></html>";
+                    s += "</tbody></table>" + "\n";
+                    s += "</div>" + "\n";
+
+                    if(!forHtml) {
+                        s += "</body></html>" + "\n";
+                    }
 
                     return s;
                 }
@@ -120,4 +130,5 @@ public class QueryService {
         }
 
     }
+
 }
