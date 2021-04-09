@@ -27,6 +27,9 @@ public class UserQueries {
     @Column (name="queryName", columnDefinition="VARCHAR(255) default 'Untitled' ")
     private String queryName;
 
+    @Column (name="query_name_suffix", columnDefinition="VARCHAR(255) default '' ")
+    private String queryNameSuffix;
+
     @Column (name="url")
     private String url;
 
@@ -48,6 +51,8 @@ public class UserQueries {
 
     @ManyToOne
     @JoinColumn(name="user_email", insertable = false, updatable = false)
+    @JsonIgnore
+
     private User user;
 
 }

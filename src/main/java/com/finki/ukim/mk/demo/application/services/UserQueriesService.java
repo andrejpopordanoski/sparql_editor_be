@@ -18,13 +18,24 @@ public class UserQueriesService {
         userQuery.setUrl(url);
 
         userQuery.setDefaultDatasetName(defaultDatasetName);
+
+
         userQuery.setQueryString(queryString);
+
         if(queryResult.length() < 16000000) {
             userQuery.setQueryResult(queryResult);
         }
         userQuery.setFormat(format);
         userQuery.setTimeout(timeout);
-        userQuery.setQueryName(queryName);
+        List<UserQueries> queriesWithSameName = userQueriesRepository.findAllByQueryName(queryName);
+        if(queriesWithSameName.size() == 0 ) {
+            userQuery.setQueryName(queryName);
+        }
+        else {
+            userQuery.setQueryName(queryName);
+            userQuery.setQueryNameSuffix("(" + queriesWithSameName.size() + ")");
+
+        }
 
         userQueriesRepository.saveAndFlush(userQuery);
     }

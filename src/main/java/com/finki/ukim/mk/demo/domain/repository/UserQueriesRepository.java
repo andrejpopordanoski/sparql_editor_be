@@ -9,5 +9,6 @@ import java.util.Optional;
 
 public interface UserQueriesRepository extends JpaRepository<UserQueries, Long> {
     List<UserQueries> findAllByUserEmail(String email);
+    List<UserQueries> findAllByQueryName(String name);
 
 }
