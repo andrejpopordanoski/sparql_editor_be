@@ -45,6 +45,9 @@ public class UserQueries {
     @Column (name = "timeout")
     private int timeout;
 
+    @Column (name = "private_access")
+    private boolean privateAccess;
+
     @Column(name = "query_result", columnDefinition="MEDIUMTEXT default 'Result was too big for storing in the database'")
     @JsonIgnore
     private String queryResult;

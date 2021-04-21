@@ -32,7 +32,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     @Bean
     protected AuthenticationManager authenticationManager() throws Exception {
+
         return super.authenticationManager();
+
     }
 
     @Override
@@ -52,7 +54,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/error/**",
                 "/api/event-log/**",
                 "/sparql/**",
-                "/api/users/register"
+                "/api/users/register",
+                "/api/users/get_all_public_queries",
+                "/api/users/get_single_public_query"
         );
     }
 

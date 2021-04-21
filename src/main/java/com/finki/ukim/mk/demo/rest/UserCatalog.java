@@ -9,6 +9,8 @@ import com.finki.ukim.mk.demo.domain.exceptions.UsernameAlreadyRegisteredExcepti
 import com.finki.ukim.mk.demo.domain.model.User;
 import com.finki.ukim.mk.demo.domain.model.UserQueries;
 import com.finki.ukim.mk.demo.domain.model.dto.UserDTO;
+import com.finki.ukim.mk.demo.domain.model.dto.UserQueriesDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,19 +57,37 @@ public class UserCatalog {
     }
 
     @PostMapping("/save_query")
-    public void saveQuery(@RequestParam String url, @RequestParam String defaultGraphSetIri, @RequestParam String queryStr, @RequestParam String format, @RequestParam(required = false, defaultValue = "10000") int timeout, @RequestParam String queryName)  {
+    public Long saveQuery(@RequestParam String url, @RequestParam String defaultGraphSetIri, @RequestParam String queryStr, @RequestParam String format, @RequestParam(required = false, defaultValue = "10000") int timeout, @RequestParam String queryName, @RequestParam(required = true) boolean privateAccess )  {
         String queryResult = queryService.getByQuery(url, defaultGraphSetIri, queryStr, format, timeout, false);
         User user = customUserDetailsService.getAuthenticatedUser();
         if(user != null){
-            userQueriesService.createNewUserQuery(user.getEmail(), url, defaultGraphSetIri, queryStr, format, timeout, queryResult, queryName);
+            return userQueriesService.createNewUserQuery(user.getEmail(), url, defaultGraphSetIri, queryStr, format, timeout, queryResult, queryName, privateAccess);
         }
-
+        return -1l;
     }
 
     @GetMapping("/get_all_queries")
-    public List<UserQueries> getAllQueriesForUser()  {
+    public UserQueriesDTO getAllQueriesForUser(@RequestParam("page") int page,
+                                               @RequestParam("size") int size)  {
         User user = customUserDetailsService.getAuthenticatedUser();
-        return userQueriesService.getAllQueriesForUser(user.getEmail());
+        Page<UserQueries> results =  userQueriesService.getAllQueriesForUser(user.getEmail(), page, size);
+        return new UserQueriesDTO(results.getTotalPages(), results.getContent() );
+
+
+    }
+
+    @GetMapping("/get_all_public_queries")
+    public UserQueriesDTO getAllPublicQueries(@RequestParam("page") int page,
+                                                 @RequestParam("size") int size)  {
+        Page<UserQueries> results =  userQueriesService.getAllPublicQueries( page, size);
+        return new UserQueriesDTO(results.getTotalPages(), results.getContent() );
+
+    }
+
+    @GetMapping("/get_single_public_query")
+    public UserQueries getAllPublicQueries( @RequestParam Long queryId)  {
+        return userQueriesService.getSingleUserQuery(queryId);
+
     }
 
     @PostMapping("/qet_query_result")
@@ -76,6 +96,7 @@ public class UserCatalog {
         String [] formatSplit = format.split("/");
 
         return ResponseEntity.ok().contentType(new MediaType(formatSplit[0], formatSplit[1])).body(userQueriesService.getQueryResult(queryId));
+
     }
 //
 
