@@ -37,11 +37,10 @@ public class SparqlCatalog {
 
     @PostMapping(value = "/sparql")
     @ResponseBody
-    public ResponseEntity<String>  getByQuery(@RequestParam String url, @RequestParam String defaultGraphSetIri, @RequestParam String queryStr, @RequestParam String format, @RequestParam(required = false, defaultValue = "10000") int timeout, @RequestParam(required = false, defaultValue = "false") boolean forHtml) {
+    public ResponseEntity<String>  getByQuery(@RequestParam String url, @RequestParam String defaultGraphSetIri, @RequestParam String queryStr, @RequestParam String format, @RequestParam(required = false, defaultValue = "10000") int timeout, @RequestParam(required = false, defaultValue = "false") boolean forHtml, @RequestParam String queryType) {
 
         String [] formatSplit = format.split("/");
-
-        return ResponseEntity.ok().contentType(new MediaType(formatSplit[0], formatSplit[1])).body(queryService.getByQuery(url, defaultGraphSetIri, queryStr, format, timeout, forHtml));
+        return ResponseEntity.ok().contentType(new MediaType(formatSplit[0], formatSplit[1])).body(queryService.getByQuery(url, defaultGraphSetIri, queryStr, format, timeout, forHtml, queryType));
     }
 
 }

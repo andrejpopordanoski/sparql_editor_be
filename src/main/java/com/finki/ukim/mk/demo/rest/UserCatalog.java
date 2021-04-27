@@ -57,8 +57,8 @@ public class UserCatalog {
     }
 
     @PostMapping("/save_query")
-    public Long saveQuery(@RequestParam String url, @RequestParam String defaultGraphSetIri, @RequestParam String queryStr, @RequestParam String format, @RequestParam(required = false, defaultValue = "10000") int timeout, @RequestParam String queryName, @RequestParam(required = true) boolean privateAccess )  {
-        String queryResult = queryService.getByQuery(url, defaultGraphSetIri, queryStr, format, timeout, false);
+    public Long saveQuery(@RequestParam String url, @RequestParam String defaultGraphSetIri, @RequestParam String queryStr, @RequestParam String format, @RequestParam(required = false, defaultValue = "10000") int timeout, @RequestParam String queryName, @RequestParam(required = true) boolean privateAccess, @RequestParam String queryType)  {
+        String queryResult = queryService.getByQuery(url, defaultGraphSetIri, queryStr, format, timeout, false, queryType);
         User user = customUserDetailsService.getAuthenticatedUser();
         if(user != null){
             return userQueriesService.createNewUserQuery(user.getEmail(), url, defaultGraphSetIri, queryStr, format, timeout, queryResult, queryName, privateAccess);
