@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -17,14 +19,23 @@ import javax.persistence.*;
 public class UserQueries {
 
     @Id
-    @Column(name="id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator",
+            parameters = {
+            @org.hibernate.annotations.Parameter(
+                    name = "uuid_gen_strategy_class",
+                    value = "org.hibernate.id.uuid.CustomVersionOneStrategy"
+            )
+    }
+    )
+    private String id;
 
     @Column (name="user_email")
     private String userEmail;
 
-    @Column (name="queryName", columnDefinition="VARCHAR(255) default 'Untitled' ")
+    @Column (name="query_name", columnDefinition="VARCHAR(255) default 'Untitled' ")
     private String queryName;
 
     @Column (name="query_name_suffix", columnDefinition="VARCHAR(255) default '' ")
@@ -48,7 +59,7 @@ public class UserQueries {
     @Column (name = "private_access")
     private boolean privateAccess;
 
-    @Column(name = "query_result", columnDefinition="MEDIUMTEXT default 'Result was too big for storing in the database'")
+    @Column(name = "query_result", columnDefinition="MEDIUMTEXT")
     @JsonIgnore
     private String queryResult;
 

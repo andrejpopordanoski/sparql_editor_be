@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.management.Query;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -57,13 +58,13 @@ public class UserCatalog {
     }
 
     @PostMapping("/save_query")
-    public Long saveQuery(@RequestParam String url, @RequestParam String defaultGraphSetIri, @RequestParam String queryStr, @RequestParam String format, @RequestParam(required = false, defaultValue = "10000") int timeout, @RequestParam String queryName, @RequestParam(required = true) boolean privateAccess, @RequestParam String queryType)  {
+    public String saveQuery(@RequestParam String url, @RequestParam String defaultGraphSetIri, @RequestParam String queryStr, @RequestParam String format, @RequestParam(required = false, defaultValue = "10000") int timeout, @RequestParam String queryName, @RequestParam(required = true) boolean privateAccess, @RequestParam String queryType)  {
         String queryResult = queryService.getByQuery(url, defaultGraphSetIri, queryStr, format, timeout, false, queryType);
         User user = customUserDetailsService.getAuthenticatedUser();
         if(user != null){
             return userQueriesService.createNewUserQuery(user.getEmail(), url, defaultGraphSetIri, queryStr, format, timeout, queryResult, queryName, privateAccess);
         }
-        return -1l;
+        return null;
     }
 
     @GetMapping("/get_all_queries")
@@ -85,13 +86,17 @@ public class UserCatalog {
     }
 
     @GetMapping("/get_single_public_query")
-    public UserQueries getAllPublicQueries( @RequestParam Long queryId)  {
+    public UserQueries getAllPublicQueries( @RequestParam String queryId)  {
         return userQueriesService.getSingleUserQuery(queryId);
+    }
 
+    @PostMapping("/delete_query")
+    public void deleteQuery( @RequestParam String queryId)  {
+        userQueriesService.deleteQuery(queryId);
     }
 
     @PostMapping("/qet_query_result")
-    public ResponseEntity<String> getQueryResult(@RequestParam String format, @RequestParam Long queryId)
+    public ResponseEntity<String> getQueryResult(@RequestParam String format, @RequestParam String queryId)
     {
         String [] formatSplit = format.split("/");
 

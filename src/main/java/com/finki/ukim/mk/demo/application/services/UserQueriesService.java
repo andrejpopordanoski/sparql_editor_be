@@ -9,13 +9,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
+
 @Service
 public class UserQueriesService {
 
     @Autowired
     UserQueriesRepository userQueriesRepository;
 
-    public Long createNewUserQuery(String userEmail, String url, String defaultDatasetName, String queryString, String format, int timeout, String queryResult, String queryName, boolean privateAccess){
+    public String createNewUserQuery(String userEmail, String url, String defaultDatasetName, String queryString, String format, int timeout, String queryResult, String queryName, boolean privateAccess){
         UserQueries userQuery = new UserQueries();
         userQuery.setUserEmail(userEmail);
         userQuery.setUrl(url);
@@ -56,11 +58,15 @@ public class UserQueriesService {
         return userQueriesRepository.findAllByPrivateAccess(false,pageable);
     }
 
-    public UserQueries getSingleUserQuery(Long queryId){
+    public UserQueries getSingleUserQuery(String queryId){
         return userQueriesRepository.findById(queryId).get();
     }
 
-    public String getQueryResult(Long id){
-        return userQueriesRepository.findById(id).get().getQueryResult();
+    public String getQueryResult(String queryId){
+        return userQueriesRepository.findById(queryId).get().getQueryResult();
+    }
+
+    public void deleteQuery(String queryId) {
+        userQueriesRepository.deleteById(queryId);
     }
 }
